@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+
+	"github.com/asxar/backend-test/internal/api"
 )
 
 type User struct {
@@ -19,13 +21,16 @@ func HandleUserRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := User{
-		Name: name,
-		Age:  uint(age),
+	response := api.Response{
+		Code: 200,
+		Content: User{
+			Name: name,
+			Age:  uint(age),
+		},
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(user); err != nil {
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		return
 	}
 }
