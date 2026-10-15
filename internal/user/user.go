@@ -2,6 +2,8 @@ package user
 
 import (
 	"encoding/json"
+	"fmt"
+	"net"
 	"net/http"
 	"strconv"
 
@@ -33,4 +35,14 @@ func HandleUserRequest(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		return
 	}
+}
+
+func HandleIPRequest(w http.ResponseWriter, r *http.Request) {
+	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		http.Error(w, "Failed to get IP", http.StatusInternalServerError)
+		return
+	}
+
+	_, _ = fmt.Fprintln(w, ip)
 }

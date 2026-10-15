@@ -13,6 +13,7 @@ import (
 func main() {
 	http.HandleFunc("/", test.IndexHandler)
 	http.HandleFunc("/user", user.HandleUserRequest)
+	http.HandleFunc("/ip", user.HandleIPRequest)
 
 	port := os.Getenv("PORT")
 	if port == "" {
