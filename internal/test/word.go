@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/asxar/backend-test/cmd/api/assets"
 	"github.com/asxar/backend-test/internal/api"
@@ -22,12 +24,12 @@ func InitWords() {
 
 func HandleWord(w http.ResponseWriter, r *http.Request) {
 	search := r.URL.Query().Get("search")
-	startWith := r.URL.Query().Get("startWith")
-	endWith := r.URL.Query().Get("endWith")
+	startWith := r.URL.Query().Get("start-with")
+	endWith := r.URL.Query().Get("end-with")
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
-	if search == "" && startWith == "" && endWith == "" {
+	if len(r.URL.Query()) <= 0 {
 		content := api.Response{
 			Code:    http.StatusBadRequest,
 			Content: "Missing search parameter",
@@ -52,6 +54,10 @@ func HandleWord(w http.ResponseWriter, r *http.Request) {
 		if endWith != "" && !strings.HasSuffix(word, endWith) {
 			continue
 		}
+		if !checkLength(word, r) {
+			continue
+		}
+
 		result = append(result, word)
 	}
 
@@ -64,4 +70,18 @@ func HandleWord(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+}
+
+func checkLength(word string, r *http.Request) bool {
+	query := r.URL.Query()
+
+	length, _ := strconv.Atoi(query.Get("len"))
+	minLen, _ := strconv.Atoi(query.Get("min-len"))
+	maxLen, _ := strconv.Atoi(query.Get("max-len"))
+
+	wordLen := utf8.RuneCountInString(word)
+
+	return (!query.Has("len") || wordLen == length) &&
+		(!query.Has("min-len") || wordLen >= minLen) &&
+		(!query.Has("max-len") || wordLen <= maxLen)
 }
