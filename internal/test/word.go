@@ -4,19 +4,15 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"os"
 	"strings"
+
+	"github.com/asxar/backend-test/cmd/api/assets"
 )
 
 var words []string
 
 func InitWords() {
-	data, err := os.ReadFile("assets/words.json")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := json.Unmarshal(data, &words); err != nil {
+	if err := json.Unmarshal(assets.WordsJSON, &words); err != nil {
 		log.Fatal(err)
 	}
 
