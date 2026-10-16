@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/asxar/backend-test/cmd/api/assets"
@@ -22,6 +23,7 @@ func InitWords() {
 
 func HandleWord(w http.ResponseWriter, r *http.Request) {
 	search := r.URL.Query().Get("search")
+	endWith, err := strconv.ParseBool(r.URL.Query().Get("endWith"))
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	if search == "" {
@@ -40,8 +42,16 @@ func HandleWord(w http.ResponseWriter, r *http.Request) {
 	result := make([]string, 0)
 
 	for _, word := range words {
-		if strings.HasPrefix(word, search) {
-			result = append(result, word)
+		if endWith {
+			if strings.HasSuffix(word, search) {
+				result = append(result, word)
+				continue
+			}
+		} else {
+			if strings.HasPrefix(word, search) {
+				result = append(result, word)
+				continue
+			}
 		}
 	}
 
@@ -50,7 +60,7 @@ func HandleWord(w http.ResponseWriter, r *http.Request) {
 		Content: result,
 	}
 
-	err := json.NewEncoder(w).Encode(content)
+	err = json.NewEncoder(w).Encode(content)
 	if err != nil {
 		return
 	}
