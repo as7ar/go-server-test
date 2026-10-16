@@ -45,7 +45,12 @@ func HandleWord(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	err := json.NewEncoder(w).Encode(result)
+	content := api.Response{
+		Code:    http.StatusOK,
+		Content: result,
+	}
+
+	err := json.NewEncoder(w).Encode(content)
 	if err != nil {
 		return
 	}
