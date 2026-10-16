@@ -1,4 +1,4 @@
-package test
+package api
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/asxar/backend-test/cmd/api/assets"
-	"github.com/asxar/backend-test/internal/api"
+	"github.com/asxar/backend-test/internal/model"
 )
 
 var words []string
@@ -30,7 +30,7 @@ func HandleWord(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	if len(r.URL.Query()) <= 0 {
-		content := api.Response{
+		content := model.Response{
 			Code:    http.StatusBadRequest,
 			Content: "Missing search parameter",
 		}
@@ -61,7 +61,7 @@ func HandleWord(w http.ResponseWriter, r *http.Request) {
 		result = append(result, word)
 	}
 
-	content := api.Response{
+	content := model.Response{
 		Code:    http.StatusOK,
 		Content: result,
 	}

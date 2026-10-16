@@ -1,8 +1,10 @@
-package test
+package api
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
+
+	"github.com/asxar/backend-test/internal/model"
 )
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
@@ -10,7 +12,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	_, err := fmt.Fprint(w, "Hello, World!")
+	err := json.NewEncoder(w).Encode(model.Response{Code: http.StatusOK, Content: "Hello, World!"})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}

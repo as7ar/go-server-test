@@ -6,17 +6,17 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/asxar/backend-test/internal/test"
+	"github.com/asxar/backend-test/internal/api"
 	"github.com/asxar/backend-test/internal/user"
 )
 
 func main() {
-	test.InitWords()
+	api.InitWords()
 
-	http.HandleFunc("/", test.IndexHandler)
+	http.HandleFunc("/", api.IndexHandler)
 	http.HandleFunc("/user", user.HandleUserRequest)
 	http.HandleFunc("/ip", user.HandleIPRequest)
-	http.HandleFunc("/words", test.HandleWord)
+	http.HandleFunc("/words", api.HandleWord)
 
 	port := os.Getenv("PORT")
 	if port == "" {

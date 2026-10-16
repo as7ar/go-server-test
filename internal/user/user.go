@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/asxar/backend-test/internal/api"
+	"github.com/asxar/backend-test/internal/model"
 )
 
 type User struct {
@@ -22,7 +22,7 @@ func HandleUserRequest(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 
-		content := api.Response{
+		content := model.Response{
 			Code:    http.StatusBadRequest,
 			Content: "Invalid Age",
 		}
@@ -34,7 +34,7 @@ func HandleUserRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := api.Response{
+	response := model.Response{
 		Code: 200,
 		Content: User{
 			Name: name,
