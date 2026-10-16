@@ -43,18 +43,16 @@ func HandleWord(w http.ResponseWriter, r *http.Request) {
 	result := make([]string, 0)
 
 	for _, word := range words {
-		if len(search) > 0 && strings.Contains(word, search) {
-			result = append(result, word)
+		if search != "" && !strings.Contains(word, search) {
 			continue
 		}
-		if len(startWith) > 0 && strings.HasPrefix(word, startWith) {
-			result = append(result, word)
+		if startWith != "" && !strings.HasPrefix(word, startWith) {
 			continue
 		}
-		if len(endWith) > 0 && strings.HasSuffix(word, endWith) {
-			result = append(result, word)
+		if endWith != "" && !strings.HasSuffix(word, endWith) {
 			continue
 		}
+		result = append(result, word)
 	}
 
 	content := api.Response{
