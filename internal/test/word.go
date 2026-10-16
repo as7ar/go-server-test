@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/asxar/backend-test/cmd/api/assets"
+	"github.com/asxar/backend-test/internal/api"
 )
 
 var words []string
@@ -21,9 +22,18 @@ func InitWords() {
 
 func HandleWord(w http.ResponseWriter, r *http.Request) {
 	search := r.URL.Query().Get("search")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	if search == "" {
-		http.Error(w, "Missing search parameter", http.StatusBadRequest)
+		content := api.Response{
+			Code:    http.StatusBadRequest,
+			Content: "Missing search parameter",
+		}
+
+		err := json.NewEncoder(w).Encode(content)
+		if err != nil {
+			return
+		}
 		return
 	}
 
@@ -35,7 +45,6 @@ func HandleWord(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	err := json.NewEncoder(w).Encode(result)
 	if err != nil {
 		return

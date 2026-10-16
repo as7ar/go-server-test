@@ -18,8 +18,19 @@ type User struct {
 func HandleUserRequest(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	age, err := strconv.ParseUint(r.URL.Query().Get("age"), 10, 0)
+	w.Header().Set("Content-Type", "application/json")
+
 	if err != nil {
-		http.Error(w, "Invalid age", http.StatusBadRequest)
+
+		content := api.Response{
+			Code:    http.StatusBadRequest,
+			Content: "Invalid Age",
+		}
+
+		err := json.NewEncoder(w).Encode(content)
+		if err != nil {
+			return
+		}
 		return
 	}
 
@@ -31,7 +42,6 @@ func HandleUserRequest(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		return
 	}
