@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/asxar/backend-test/cmd/api/assets"
@@ -23,10 +22,12 @@ func InitWords() {
 
 func HandleWord(w http.ResponseWriter, r *http.Request) {
 	search := r.URL.Query().Get("search")
-	endWith, err := strconv.ParseBool(r.URL.Query().Get("endWith"))
+	startWith := r.URL.Query().Get("startWith")
+	endWith := r.URL.Query().Get("endWith")
+
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
-	if search == "" {
+	if search == "" && startWith == "" && endWith == "" {
 		content := api.Response{
 			Code:    http.StatusBadRequest,
 			Content: "Missing search parameter",
@@ -42,16 +43,17 @@ func HandleWord(w http.ResponseWriter, r *http.Request) {
 	result := make([]string, 0)
 
 	for _, word := range words {
-		if endWith {
-			if strings.HasSuffix(word, search) {
-				result = append(result, word)
-				continue
-			}
-		} else {
-			if strings.HasPrefix(word, search) {
-				result = append(result, word)
-				continue
-			}
+		if len(search) > 0 && strings.Contains(word, search) {
+			result = append(result, word)
+			continue
+		}
+		if len(startWith) > 0 && strings.HasPrefix(word, startWith) {
+			result = append(result, word)
+			continue
+		}
+		if len(endWith) > 0 && strings.HasSuffix(word, endWith) {
+			result = append(result, word)
+			continue
 		}
 	}
 
@@ -60,7 +62,7 @@ func HandleWord(w http.ResponseWriter, r *http.Request) {
 		Content: result,
 	}
 
-	err = json.NewEncoder(w).Encode(content)
+	err := json.NewEncoder(w).Encode(content)
 	if err != nil {
 		return
 	}
