@@ -11,9 +11,12 @@ import (
 )
 
 func main() {
+	test.InitWords()
+
 	http.HandleFunc("/", test.IndexHandler)
 	http.HandleFunc("/user", user.HandleUserRequest)
 	http.HandleFunc("/ip", user.HandleIPRequest)
+	http.HandleFunc("/words", test.HandleWord)
 
 	port := os.Getenv("PORT")
 	if port == "" {
